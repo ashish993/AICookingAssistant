@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Groq client with API key
-#client = Groq(api_key="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")
 client = Groq(api_key=st.secrets["apikey"])
 
 def analyze_ingredient(image_bytes):
@@ -57,7 +56,7 @@ def suggest_recipe(ingredients):
 def chat_with_ai(prompt, ingredients):
     # Send user prompt to Llama3.2 to get a response
     response = client.chat.completions.create(
-        model="llama3-70b-8192",
+        model="llama3-8b-8192",
         messages=[
             {"role": "user", "content": f"{prompt} (Ingredients: {ingredients})"}
         ]
