@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Groq client with API key
+#client = Groq(api_key="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")
 client = Groq(api_key=st.secrets["apikey"])
 
 def analyze_ingredient(image_bytes):
