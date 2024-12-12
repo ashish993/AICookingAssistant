@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Groq client with API key
-client = Groq(api_key=st.secrets["apikey"])
+client = Groq(api_key="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")
 
 def analyze_ingredient(image_bytes):
     # Convert the image to base64
@@ -53,9 +53,51 @@ def suggest_recipe(ingredients):
     )
     return response.choices[0].message.content
 
+def chat_with_ai(prompt, ingredients):
+    # Send user prompt to Llama3.2 to get a response
+    response = client.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[
+            {"role": "user", "content": f"{prompt} (Ingredients: {ingredients})"}
+        ]
+    )
+    return response.choices[0].message.content
+
+# Initialize chat history
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+
+# Initialize flag to show chat option
+if 'show_chat' not in st.session_state:
+    st.session_state.show_chat = False
+
+# Initialize initial response
+if 'initial_response' not in st.session_state:
+    st.session_state.initial_response = None
 
 # Streamlit UI
 st.title("AI Cooking Assistant")
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f5f5f5;
+    }
+    .chat-bubble {
+        background-color: #DCF8C6;
+        color: black;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    .user-bubble {
+        background-color: #E0F7FA;
+        color: black;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 uploaded_files = st.file_uploader("Upload ingredient images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
 
@@ -73,6 +115,38 @@ if uploaded_files:
     if ingredients_list:
         all_ingredients = ", ".join(ingredients_list)
         st.write(f"All identified ingredients: {all_ingredients}")
-        recipe = suggest_recipe(all_ingredients)
+        
+        if st.session_state.initial_response is None:
+            st.session_state.initial_response = suggest_recipe(all_ingredients)
+        
         st.write("Suggested Recipe:")
-        st.write(recipe)
+        st.write(st.session_state.initial_response)
+        
+        # Set flag to show chat option
+        st.session_state.show_chat = True
+
+# Display chat history with WhatsApp-like styling
+for message in st.session_state.chat_history:
+    if message["role"] == "user":
+        st.markdown(f"<div class='user-bubble'>User: {message['content']}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div class='chat-bubble'>AI: {message['content']}</div>", unsafe_allow_html=True)
+
+# Chat option for user interaction
+if st.session_state.show_chat:
+    st.write("Chat with AI about the recipe:")
+    user_input = st.text_input("Ask a question about the recipe:")
+
+    if st.button("Get Response"):
+        if user_input:
+            # Add user input to chat history
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            
+            # Get AI response
+            chat_response = chat_with_ai(user_input, all_ingredients)
+            
+            # Add AI response to chat history
+            st.session_state.chat_history.append({"role": "assistant", "content": chat_response})
+            
+            # Display chat history
+            #st.experimental_rerun()
