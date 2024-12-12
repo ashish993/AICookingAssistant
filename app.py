@@ -16,7 +16,7 @@ def analyze_ingredient(image_bytes):
 
     # Send request to Groq API to identify ingredients
     response = client.chat.completions.create(
-        model="llama-3.2-11b-vision-preview",
+        model="llama-3.2-90b-vision-preview",
         messages=[
             {
                 "role": "user",
