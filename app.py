@@ -46,16 +46,16 @@ def analyze_ingredient(image_bytes):
 def suggest_recipe(ingredients):
     # Send identified ingredients to Llama3.2 to get recipe suggestions
     response = client.chat.completions.create(
-        model="llama-3.2-11b-text-preview",
+        model="llama3-70b-8192",
         messages=[
-            {"role": "user", "content": f"Suggest a recipe using these ingredients: {ingredients}"}
+            {"role": "user", "content": f"Suggest a recipe using these ingredients: {ingredients}" along with the approximiate calories. No need to have all ingredients. you can use few ingredients from all.}
         ]
     )
     return response.choices[0].message.content
 
 
 # Streamlit UI
-st.title("AI-Powered Cooking Assistant")
+st.title("AI Cooking Assistant")
 
 uploaded_files = st.file_uploader("Upload ingredient images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
 
