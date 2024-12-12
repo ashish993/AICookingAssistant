@@ -48,7 +48,7 @@ def suggest_recipe(ingredients):
     response = client.chat.completions.create(
         model="llama3-70b-8192",
         messages=[
-            {"role": "user", "content": f"Suggest a recipe using these ingredients: {ingredients}" along with the approximiate calories. No need to have all ingredients. you can use few ingredients from all.}
+            {"role": "user", "content": f"Suggest a recipe using these ingredients: {ingredients} along with the approximiate calories. No need to have all ingredients. you can use few ingredients from all."}
         ]
     )
     return response.choices[0].message.content
