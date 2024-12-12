@@ -1,4 +1,3 @@
 Groq
-base64
 streamlit
 python-dotenv
